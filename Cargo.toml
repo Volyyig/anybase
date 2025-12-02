@@ -6,7 +6,6 @@ authors = ["Entlst <volyyig@gmail.com>"]
 description = "High-performance arbitrary base integer conversion library"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/Volyyig/anybase"
-readme = "README.md"
 keywords = ["base-conversion", "arbitrary-precision", "math"]
 categories = ["algorithms", "encoding"]
 
