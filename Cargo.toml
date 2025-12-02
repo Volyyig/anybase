@@ -1,0 +1,19 @@
+[package]
+name = "anybase"
+version = "0.1.0"
+edition = "2024"
+description = "高性能任意进制整数转换库"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/yourusername/anybase"
+readme = "README.md"
+keywords = ["base-conversion", "arbitrary-precision", "math"]
+categories = ["algorithms", "encoding"]
+
+[dependencies]
+
+[dev-dependencies]
+criterion = "0.7.0"
+
+[[bench]]
+name = "my_benchmark"
+harness = false
