@@ -2,7 +2,8 @@
 name = "anybase"
 version = "0.1.0"
 edition = "2024"
-description = "高性能任意进制整数转换库"
+authors = ["Entlst <your.email@example.com>"]
+description = "High-performance arbitrary base integer conversion library"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/yourusername/anybase"
 readme = "README.md"

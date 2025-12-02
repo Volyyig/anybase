@@ -208,7 +208,7 @@ fn parse_to_bigint(input: &str, src_table: &str) -> Result<BigInt, String> {
     }
 
     let mut big = BigInt::zero();
-    let src_base = src_table.len() as u32;
+    let src_base = src_table.chars().count() as u32;
     for ch in input.chars() {
         let digit = match map.get(&ch) {
             Some(&d) => d,
@@ -296,6 +296,7 @@ pub fn convert_base(input: &str, src_table: &str, dst_table: &str) -> Result<Str
     let b = parse_to_bigint(input, src_table)?;
     bigint_to_dst_table(b, dst_table)
 }
+
 
 #[cfg(test)]
 mod tests {
