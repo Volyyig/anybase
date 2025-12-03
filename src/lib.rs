@@ -35,8 +35,10 @@
 //! - Uses limb base = 1_000_000_000 (1e9)
 //! - Uses u128 as intermediate to avoid overflow
 
-mod core;
-use core::*;
+mod big_int;
+mod converter;
+
+pub use converter::*;
 
 /// Main API: Convert input (src_table) to dst_table
 ///
@@ -74,14 +76,20 @@ use core::*;
 /// - src_table contains duplicate characters
 /// - input contains characters not in src_table
 pub fn convert_base(input: &str, src_table: &str, dst_table: &str) -> Result<String, String> {
-    let b = parse_to_bigint(input, src_table)?;
-    bigint_to_dst_table(b, dst_table)
+    let converter = Converter::new(src_table, dst_table);
+    converter.convert(input)
 }
 
 
 #[cfg(test)]
 mod tests {
+
     use super::*;
+
+    #[test]
+    // playground
+    fn something() {
+    }
 
     #[test]
     fn test_basic() {
@@ -100,4 +108,33 @@ mod tests {
         let out = convert_base(&input, src, dst).unwrap();
         assert!(!out.is_empty());
     }
+
+    #[test]
+    fn test_converter() {
+        let converter = Converter::new("0123456789", "01");
+        let result = converter.convert("10").unwrap();
+        assert_eq!(result, "1010");
+    }
+
+    #[test]
+    fn test_inverse() {
+        let converter = Converter::new("0123456789", "01");
+        let inv_converter = converter.inverse();
+        let result = inv_converter.convert("1010").unwrap();
+        assert_eq!(result, "10");
+    }
+
+    #[test]
+    #[should_panic(expected = "dst_table contains duplicate characters")]
+    fn test_duplicate_chars_in_table() {
+        convert_base("123", "0123456789", "011").unwrap();
+    }
+
+    #[test]
+    fn test_same_table() {
+        let converter = Converter::new("0123456789", "0123456789");
+        let result = converter.convert("12345").unwrap();
+        assert_eq!(result, "12345");
+    }
+
 }
