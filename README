@@ -4,7 +4,7 @@ A Rust library for converting numbers between arbitrary bases.
 
 ## ✨ Features
 
-- 🔄 Convert between any base (2-36)
+- 🔄 Convert between any base
 - ⚡ Fast and efficient algorithms
 - 🎯 Simple, intuitive API
 - 📦 No external dependencies
@@ -13,9 +13,8 @@ A Rust library for converting numbers between arbitrary bases.
 
 Add this to your `Cargo.toml`:
 
-```toml
-[dependencies]
-anybase = "0.2.0"
+```bash
+cargo add anybase
 ```
 
 ## 💡 Usage
@@ -35,7 +34,7 @@ assert_eq!(result, "10");
 
 ## 📄 License
 
-MIT
+MIT OR Apache-2.0
 
 ## 🤝 Contributing
 
