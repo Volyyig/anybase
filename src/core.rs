@@ -25,13 +25,6 @@ impl BigInt {
     ///
     /// A new BigInt instance representing zero
     ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use anybase::BigInt;
-    ///
-    /// let zero = BigInt::zero();
-    /// ```
     pub fn zero() -> Self {
         BigInt { limbs: vec![0] }
     }
