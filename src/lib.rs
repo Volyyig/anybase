@@ -1,46 +1,49 @@
-//! High-performance arbitrary base integer conversion library
-//!
-//! This library provides efficient conversion between arbitrary base numeral systems
-//! using a custom character table approach. It supports very large numbers through
-//! its custom BigInt implementation that avoids overflow issues.
-//!
-//! ## Features
-//!
-//! - Convert between any two bases using custom character tables
-//! - Supports arbitrarily large integers
-//! - Optimized performance with limb-based arithmetic
-//! - No external dependencies
-//!
-//! ## Examples
-//!
-//! ```rust
-//! use anybase::convert_base;
-//!
-//! // Convert hexadecimal to octal
-//! let result = convert_base("ff", "0123456789abcdef", "01234567").unwrap();
-//! assert_eq!(result, "377");
-//!
-//! // Convert decimal to hexadecimal
-//! let result = convert_base("255", "0123456789", "0123456789abcdef").unwrap();
-//! assert_eq!(result, "ff");
-//! ```
-//!
-//! ## Performance
-//!
-//! The library uses a limb-based BigInt implementation with a radix of 1,000,000,000
-//! to efficiently handle large numbers while avoiding overflow. Arithmetic operations
-//! use u128 intermediates for additional safety.
+/*!
+High-performance arbitrary base integer conversion library
+
+This library provides efficient conversion between arbitrary base numeral systems
+using a custom character table approach. It supports very large numbers through
+its custom BigInt implementation that avoids overflow issues.
+
+## Features
+
+- Convert between any two bases using custom character tables
+- Supports arbitrarily large integers
+- Optimized performance with limb-based arithmetic
+- No external dependencies
+
+## Examples
+
+```rust
+use anybase::{convert_base, Converter};
+
+// Functional
+let result = convert_base("ff", "0123456789abcdef", "01234567").unwrap();
+assert_eq!(result, "377");
+
+// Object-oriented
+let converter = Converter::new("01", "0123456789");
+let result = converter.convert("1010").unwrap();
+assert_eq!(result, "10");
+```
+
+## Performance
+
+The library uses a limb-based BigInt implementation with a radix of u32
+to efficiently handle large numbers while avoiding overflow. Arithmetic operations
+use u64 intermediates for additional safety.
+*/
 
 //! High-performance arbitrary base integer conversion (optimized version)
-//! - Uses limb base = 1_000_000_000 (1e9)
-//! - Uses u128 as intermediate to avoid overflow
+//! - Uses limb base = u32::MAX
+//! - Uses u64 as intermediate to avoid overflow
 
 mod big_int;
 mod converter;
 
 pub use converter::*;
 
-/// Main API: Convert input (src_table) to dst_table
+/// Concise functional interface for base conversion
 ///
 /// Converts a number represented as a string in one base to its equivalent
 /// in another base, using custom character tables for both bases.

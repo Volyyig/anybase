@@ -1,0 +1,42 @@
+# 🔢 anybase
+
+A Rust library for converting numbers between arbitrary bases.
+
+## ✨ Features
+
+- 🔄 Convert between any base (2-36)
+- ⚡ Fast and efficient algorithms
+- 🎯 Simple, intuitive API
+- 📦 No external dependencies
+
+## 📥 Installation
+
+Add this to your `Cargo.toml`:
+
+```toml
+[dependencies]
+anybase = "0.2.0"
+```
+
+## 💡 Usage
+
+```rust
+use anybase::{convert_base, Converter};
+
+// Functional
+let result = convert_base("ff", "0123456789abcdef", "01234567").unwrap();
+assert_eq!(result, "377");
+
+// Object-oriented
+let converter = Converter::new("01", "0123456789");
+let result = converter.convert("1010").unwrap();
+assert_eq!(result, "10");
+```
+
+## 📄 License
+
+MIT
+
+## 🤝 Contributing
+
+Contributions welcome! Please open an issue or submit a pull request.
