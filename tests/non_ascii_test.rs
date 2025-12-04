@@ -3,10 +3,13 @@ use anybase::*;
 #[test]
 fn test_non_ascii() {
     // Testing the non-ascii characters
-    let src = "你好世界";
-    let dst = "01";
-    println!("{}", convert_base("你好你好", src, dst).unwrap());
-    // println!("{}", convert_base("你", src, dst).unwrap());
+    let src = "01";
+    let dst = "你好世界";
+    let converter = Converter::new(src, dst);
+    let decoder = converter.inverse();
+
+    let input = "101010";
+    assert_eq!(input, decoder.convert(&converter.convert(input).unwrap()).unwrap())
 }
 
 #[test]

@@ -83,6 +83,30 @@ pub fn convert_base(input: &str, src_table: &str, dst_table: &str) -> Result<Str
     converter.convert(input)
 }
 
+pub mod base {
+    /*!
+    Common base character tables for convenience
+
+    This module provides predefined character tables for commonly used numeral systems.
+    These can be used directly with the [crate::Converter] or [crate::convert_base] function.
+    # Example
+
+    ```
+    use anybase::{convert_base, base};
+
+    let result = convert_base("1010", base::BIN, base::DEC).unwrap();
+    assert_eq!(result, "10");
+    ```
+    */
+    /// Binary base character table (base-2)
+    pub const BIN: &str = "01";
+    /// Octal base character table (base-8)
+    pub const OCT: &str = "01234567";
+    /// Decimal base character table (base-10)
+    pub const DEC: &str = "0123456789";
+    /// Hexadecimal base character table (base-16)
+    pub const HEX: &str = "0123456789abcdef";
+}
 
 #[cfg(test)]
 mod tests {
@@ -140,4 +164,10 @@ mod tests {
         assert_eq!(result, "12345");
     }
 
+    #[test]
+    fn test_preset_bases() {
+        let converter = Converter::new(base::DEC, base::HEX);
+        let result = converter.convert("255").unwrap();
+        assert_eq!(result, "ff");
+    }
 }
