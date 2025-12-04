@@ -98,6 +98,7 @@ pub mod base {
     assert_eq!(result, "10");
     ```
     */
+    
     /// Binary base character table (base-2)
     pub const BIN: &str = "01";
     /// Octal base character table (base-8)
