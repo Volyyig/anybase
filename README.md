@@ -11,7 +11,7 @@ A Rust library for converting numbers between arbitrary bases.
 
 ## 📥 Installation
 
-Add this to your `Cargo.toml`:
+Run the following command in your project directory:
 
 ```bash
 cargo add anybase
