@@ -1,7 +1,6 @@
 use criterion::{Criterion, criterion_group, criterion_main};
 use std::hint::black_box;
 
-use anybase::convert_base;
 use anybase::Converter;
 fn bench_convert_base(c: &mut Criterion) {
     let src_table = "0123456789abcdefghijklmnopqrstuvwxyz";
@@ -12,12 +11,11 @@ fn bench_convert_base(c: &mut Criterion) {
 
     c.bench_function("default", |b| {
         b.iter(|| {
-            let out = convert_base(
+            let out = Converter::convert_base(
                 black_box(&input),
                 black_box(src_table),
                 black_box(dst_table),
             )
-            .unwrap();
             black_box(out);
         })
     });
@@ -25,9 +23,8 @@ fn bench_convert_base(c: &mut Criterion) {
 
     c.bench_function("object", |b| {
         b.iter(|| {
-            let out = Converter::new(src_table, dst_table)
+            let out = Converter::new(src_table, dst_table).unwrap()
                 .convert(black_box(&input))
-            .unwrap();
             black_box(out);
         })
     });

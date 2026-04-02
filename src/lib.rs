@@ -43,46 +43,6 @@ mod converter;
 
 pub use converter::*;
 
-/// Concise functional interface for base conversion
-///
-/// Converts a number represented as a string in one base to its equivalent
-/// in another base, using custom character tables for both bases.
-///
-/// # Arguments
-///
-/// * `input` - The input number as a string
-/// * `src_table` - Character table for the source base
-/// * `dst_table` - Character table for the destination base
-///
-/// # Returns
-///
-/// Result containing the converted string or an error message
-///
-/// # Examples
-///
-/// ```rust
-/// use anybase::convert_base;
-///
-/// // Convert hexadecimal to binary
-/// let result = convert_base("ff", "0123456789abcdef", "01");
-/// assert_eq!(result.unwrap(), "11111111");
-///
-/// // Convert decimal to base-36
-/// let result = convert_base("12345", "0123456789", "0123456789abcdefghijklmnopqrstuvwxyz");
-/// assert_eq!(result.unwrap(), "9ix");
-/// ```
-///
-/// # Errors
-///
-/// Returns an error if:
-/// - src_table or dst_table is empty
-/// - src_table contains duplicate characters
-/// - input contains characters not in src_table
-pub fn convert_base(input: &str, src_table: &str, dst_table: &str) -> Result<String, String> {
-    let converter = Converter::new(src_table, dst_table);
-    converter.convert(input)
-}
-
 pub mod base {
     /*!
     Common base character tables for convenience
@@ -123,8 +83,8 @@ mod tests {
     fn test_basic() {
         let src = "0123456789abcdef";
         let dst = "01234567";
-        assert_eq!(convert_base("ff", src, dst).unwrap(), "377");
-        assert_eq!(convert_base("0", src, dst).unwrap(), "0");
+        assert_eq!(Converter::convert_base("ff", src, dst).unwrap(), "377");
+        assert_eq!(Converter::convert_base("0", src, dst).unwrap(), "0");
     }
 
     #[test]
@@ -133,20 +93,20 @@ mod tests {
         let src = "0123456789abcdefghijklmnopqrstuvwxyz"; // base36
         let dst = "01"; // to binary
         let input = "z".repeat(200); // very large number
-        let out = convert_base(&input, src, dst).unwrap();
+        let out = Converter::convert_base(&input, src, dst).unwrap();
         assert!(!out.is_empty());
     }
 
     #[test]
     fn test_converter() {
-        let converter = Converter::new("0123456789", "01");
+        let converter = Converter::new("0123456789", "01").unwrap();
         let result = converter.convert("10").unwrap();
         assert_eq!(result, "1010");
     }
 
     #[test]
     fn test_inverse() {
-        let converter = Converter::new("0123456789", "01");
+        let converter = Converter::new("0123456789", "01").unwrap();
         let inv_converter = converter.inverse();
         let result = inv_converter.convert("1010").unwrap();
         assert_eq!(result, "10");
@@ -155,19 +115,19 @@ mod tests {
     #[test]
     #[should_panic(expected = "dst_table contains duplicate characters")]
     fn test_duplicate_chars_in_table() {
-        convert_base("123", "0123456789", "011").unwrap();
+        Converter::convert_base("123", "0123456789", "011").unwrap();
     }
 
     #[test]
     fn test_same_table() {
-        let converter = Converter::new("0123456789", "0123456789");
+        let converter = Converter::new("0123456789", "0123456789").unwrap();
         let result = converter.convert("12345").unwrap();
         assert_eq!(result, "12345");
     }
 
     #[test]
     fn test_preset_bases() {
-        let converter = Converter::new(base::DEC, base::HEX);
+        let converter = Converter::new(base::DEC, base::HEX).unwrap();
         let result = converter.convert("255").unwrap();
         assert_eq!(result, "ff");
     }

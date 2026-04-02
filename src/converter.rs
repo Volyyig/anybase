@@ -42,25 +42,26 @@ impl<'a> Converter<'a> {
     /// use anybase::Converter;
     /// let converter = Converter::new("01", "0123456789");
     /// ```                 
-    pub fn new(src_table: &'a str, dst_table: &'a str) -> Self {
-        Converter {
+    pub fn new(src_table: &'a str, dst_table: &'a str) -> Result<Self, &'static str> {
+        
+        Ok(Converter {
             src_table,
             dst_table,
             src_map: {
                 if src_table.is_empty() {
-                    panic!("src_table is empty");
+                    return Err("src_table is empty");
                 }
                 let mut map = HashMap::new();
                 for (i, ch) in src_table.chars().enumerate() {
                     if map.insert(ch, i as u32).is_some() {
-                        panic!("src_table contains duplicate characters");
+                        return Err("src_table contains duplicate characters");
                     }
                 }
                 map
             },
             dst_chars: {
                 if dst_table.is_empty() {
-                    panic!("dst_table is empty");
+                    return Err("dst_table is empty");
                 }
                 let chars: Vec<char> = dst_table.chars().collect();
                 let unique_count = chars
@@ -68,11 +69,11 @@ impl<'a> Converter<'a> {
                     .collect::<std::collections::HashSet<_>>()
                     .len();
                 if unique_count != chars.len() {
-                    panic!("dst_table contains duplicate characters");
+                    return  Err("dst_table contains duplicate characters");
                 }
                 chars
             },
-        }
+        })
     }
 
     /// Creates an inverse converter with swapped source and destination tables.
@@ -91,7 +92,7 @@ impl<'a> Converter<'a> {
     /// assert_eq!(converter.dst_table(), inverse_converter.src_table());
     /// ```
     pub fn inverse(&self) -> Self {
-        Converter::new(self.dst_table, self.src_table)
+        Converter::new(self.dst_table, self.src_table).expect("inverse is expected to be called for properly constructed Converters")
     }
 
     /// Converts an input string from source base to destination base.
@@ -116,6 +117,46 @@ impl<'a> Converter<'a> {
     pub fn convert(&self, input: &str) -> Result<String, String> {
         let b = self.parse_to_bigint(input)?;
         self.bigint_to_dst_table(b)
+    }
+
+    /// Concise functional interface for base conversion
+    ///
+    /// Converts a number represented as a string in one base to its equivalent
+    /// in another base, using custom character tables for both bases.
+    ///
+    /// # Arguments
+    ///
+    /// * `input` - The input number as a string
+    /// * `src_table` - Character table for the source base
+    /// * `dst_table` - Character table for the destination base
+    ///
+    /// # Returns
+    ///
+    /// Result containing the converted string or an error message
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use anybase::convert_base;
+    ///
+    /// // Convert hexadecimal to binary
+    /// let result = convert_base("ff", "0123456789abcdef", "01");
+    /// assert_eq!(result.unwrap(), "11111111");
+    ///
+    /// // Convert decimal to base-36
+    /// let result = convert_base("12345", "0123456789", "0123456789abcdefghijklmnopqrstuvwxyz");
+    /// assert_eq!(result.unwrap(), "9ix");
+    /// ```
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if:
+    /// - src_table or dst_table is empty
+    /// - src_table contains duplicate characters
+    /// - input contains characters not in src_table
+    pub fn convert_base(input: &str, src_table: &str, dst_table: &str) -> Result<String, String> {
+        let converter = Converter::new(src_table, dst_table)?;
+        converter.convert(input)
     }
 
     /// Returns the source character table.
