@@ -60,7 +60,7 @@ pub use converter::*;
 /// 
 /// # Returns Err()
 ///
-///  A String containing the error code
+///  A String containing the error text
 ///
 /// # Examples
 ///
@@ -76,10 +76,9 @@ pub use converter::*;
 /// assert_eq!(result, "9ix");
 /// ```
 ///
-/// # Err()-s
+/// # Err() casues:
 ///
-/// Returns an error if:
-/// - src_table or dst_table is empty
+/// - src_table or dst_table does not have enough elements
 /// - src_table contains duplicate characters
 /// - input contains characters not in src_table
 pub fn convert_base(input: &str, src_table: &str, dst_table: &str) -> Result<String, String> {

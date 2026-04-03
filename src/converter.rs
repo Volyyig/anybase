@@ -34,7 +34,7 @@ impl <'a>Converter<'a> {
     /// 
     /// # returns Err() 
     /// 
-    /// When either table is too samll or contains duplicate characters or src and dst are equal
+    /// When either table is too small or contains duplicate characters or src and dst are equal
     /// 
     /// # Examples
     /// 
