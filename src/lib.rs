@@ -15,14 +15,14 @@ its custom BigInt implementation that avoids overflow issues.
 ## Examples
 
 ```rust
-use anybase::{convert_base, Converter};
+use anybase::{Converter, convert_base};
 
 // Functional
 let result = convert_base("ff", "0123456789abcdef", "01234567").unwrap();
 assert_eq!(result, "377");
 
 // Object-oriented
-let converter = Converter::new("01", "0123456789");
+let converter = Converter::new("01", "0123456789").unwrap();
 let result = converter.convert("1010").unwrap();
 assert_eq!(result, "10");
 ```
@@ -54,32 +54,35 @@ pub use converter::*;
 /// * `src_table` - Character table for the source base
 /// * `dst_table` - Character table for the destination base
 ///
-/// # Returns
+/// # Returns Ok()
 ///
 /// Result containing the converted string or an error message
+/// 
+/// # Returns Err()
+///
+///  A String containing the error text
 ///
 /// # Examples
 ///
 /// ```rust
-/// use anybase::convert_base;
+/// use anybase::{Converter, convert_base};
 ///
 /// // Convert hexadecimal to binary
-/// let result = convert_base("ff", "0123456789abcdef", "01");
-/// assert_eq!(result.unwrap(), "11111111");
+/// let result = convert_base("ff", "0123456789abcdef", "01").unwrap();
+/// assert_eq!(result, "11111111");
 ///
 /// // Convert decimal to base-36
-/// let result = convert_base("12345", "0123456789", "0123456789abcdefghijklmnopqrstuvwxyz");
-/// assert_eq!(result.unwrap(), "9ix");
+/// let result = convert_base("12345", "0123456789", "0123456789abcdefghijklmnopqrstuvwxyz").unwrap();
+/// assert_eq!(result, "9ix");
 /// ```
 ///
-/// # Errors
+/// # Err() casues:
 ///
-/// Returns an error if:
-/// - src_table or dst_table is empty
+/// - src_table or dst_table does not have enough elements
 /// - src_table contains duplicate characters
 /// - input contains characters not in src_table
 pub fn convert_base(input: &str, src_table: &str, dst_table: &str) -> Result<String, String> {
-    let converter = Converter::new(src_table, dst_table);
+    let converter = Converter::new(src_table, dst_table)?;
     converter.convert(input)
 }
 
@@ -92,7 +95,7 @@ pub mod base {
     # Example
 
     ```
-    use anybase::{convert_base, base};
+    use anybase::{Converter, base, convert_base};
 
     let result = convert_base("1010", base::BIN, base::DEC).unwrap();
     assert_eq!(result, "10");
@@ -138,15 +141,29 @@ mod tests {
     }
 
     #[test]
+    fn test_converter_creation_faliures() {
+        macro_rules! assert_err {
+            ($expr:expr, $msg:expr) => {
+                assert_eq!($expr.err().unwrap(), $msg);
+            };
+        }
+        assert_err!( Converter::new("01", "01"), "src_table and dst_table are equal");
+        assert_err!( Converter::new("", "01"), "src_table is not large enough to be a number system");
+        assert_err!( Converter::new("111111", "01"), "src_table contains duplicate characters");
+        assert_err!( Converter::new("01", ""), "dst_table is not large enough to be a number system");
+        assert_err!( Converter::new("01", "11111"), "dst_table contains duplicate characters");
+    }
+
+    #[test]
     fn test_converter() {
-        let converter = Converter::new("0123456789", "01");
+        let converter = Converter::new("0123456789", "01").unwrap();
         let result = converter.convert("10").unwrap();
         assert_eq!(result, "1010");
     }
 
     #[test]
     fn test_inverse() {
-        let converter = Converter::new("0123456789", "01");
+        let converter = Converter::new("0123456789", "01").unwrap();
         let inv_converter = converter.inverse();
         let result = inv_converter.convert("1010").unwrap();
         assert_eq!(result, "10");
@@ -159,15 +176,8 @@ mod tests {
     }
 
     #[test]
-    fn test_same_table() {
-        let converter = Converter::new("0123456789", "0123456789");
-        let result = converter.convert("12345").unwrap();
-        assert_eq!(result, "12345");
-    }
-
-    #[test]
     fn test_preset_bases() {
-        let converter = Converter::new(base::DEC, base::HEX);
+        let converter = Converter::new(base::DEC, base::HEX).unwrap();
         let result = converter.convert("255").unwrap();
         assert_eq!(result, "ff");
     }

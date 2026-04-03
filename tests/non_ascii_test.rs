@@ -5,7 +5,7 @@ fn test_non_ascii() {
     // Testing the non-ascii characters
     let src = "01";
     let dst = "你好世界";
-    let converter = Converter::new(src, dst);
+    let converter = Converter::new(src, dst).unwrap();
     let decoder = converter.inverse();
 
     let input = "101010";

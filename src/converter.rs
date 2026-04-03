@@ -12,7 +12,7 @@ use std::collections::HashMap;
 /// ```
 /// use anybase::Converter;
 /// 
-/// let converter = Converter::new("01", "0123456789");
+/// let converter = Converter::new("01", "0123456789").unwrap();
 /// let result = converter.convert("1010").unwrap();
 /// assert_eq!(result, "10");
 /// ```
@@ -24,7 +24,7 @@ pub struct Converter<'a> {
     dst_chars: Vec<char>,
 }
 
-impl<'a> Converter<'a> {
+impl <'a>Converter<'a> {
     /// Creates a new `Converter` with specified source and destination character tables.
     /// 
     /// # Arguments
@@ -32,9 +32,9 @@ impl<'a> Converter<'a> {
     /// * `src_table` - A string slice representing the source base character table
     /// * `dst_table` - A string slice representing the destination base character table
     /// 
-    /// # Panics
+    /// # returns Err() 
     /// 
-    /// Panics if either table is empty or contains duplicate characters.
+    /// When either table is too small or contains duplicate characters or src and dst are equal
     /// 
     /// # Examples
     /// 
@@ -42,25 +42,28 @@ impl<'a> Converter<'a> {
     /// use anybase::Converter;
     /// let converter = Converter::new("01", "0123456789");
     /// ```                 
-    pub fn new(src_table: &'a str, dst_table: &'a str) -> Self {
-        Converter {
+    pub fn new(src_table: &'a str, dst_table: &'a str) -> Result<Self, &'static str> {
+        if src_table == dst_table {
+            return Err("src_table and dst_table are equal");
+        }
+        Ok(Converter {
             src_table,
             dst_table,
             src_map: {
-                if src_table.is_empty() {
-                    panic!("src_table is empty");
+                if src_table.len() < 2 {
+                    return Err("src_table is not large enough to be a number system");
                 }
                 let mut map = HashMap::new();
                 for (i, ch) in src_table.chars().enumerate() {
                     if map.insert(ch, i as u32).is_some() {
-                        panic!("src_table contains duplicate characters");
+                        return Err("src_table contains duplicate characters");
                     }
                 }
                 map
             },
             dst_chars: {
-                if dst_table.is_empty() {
-                    panic!("dst_table is empty");
+                if dst_table.len() < 2 {
+                    return Err("dst_table is not large enough to be a number system");
                 }
                 let chars: Vec<char> = dst_table.chars().collect();
                 let unique_count = chars
@@ -68,11 +71,11 @@ impl<'a> Converter<'a> {
                     .collect::<std::collections::HashSet<_>>()
                     .len();
                 if unique_count != chars.len() {
-                    panic!("dst_table contains duplicate characters");
+                    return  Err("dst_table contains duplicate characters");
                 }
                 chars
             },
-        }
+        })
     }
 
     /// Creates an inverse converter with swapped source and destination tables.
@@ -85,13 +88,13 @@ impl<'a> Converter<'a> {
     /// 
     /// ```
     /// use anybase::Converter;
-    /// let converter = Converter::new("01", "0123456789");
+    /// let converter = Converter::new("01", "0123456789").unwrap();
     /// let inverse_converter = converter.inverse();
     /// assert_eq!(converter.src_table(), inverse_converter.dst_table());
     /// assert_eq!(converter.dst_table(), inverse_converter.src_table());
     /// ```
     pub fn inverse(&self) -> Self {
-        Converter::new(self.dst_table, self.src_table)
+        Converter::new(self.dst_table, self.src_table).expect("inverse is expected to be called for properly constructed Converters")
     }
 
     /// Converts an input string from source base to destination base.
@@ -109,7 +112,7 @@ impl<'a> Converter<'a> {
     /// 
     /// ```
     /// use anybase::Converter;
-    /// let converter = Converter::new("01", "0123456789");
+    /// let converter = Converter::new("01", "0123456789").unwrap();
     /// let result = converter.convert("1010").unwrap();
     /// assert_eq!(result, "10");
     /// ```
