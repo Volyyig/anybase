@@ -15,7 +15,7 @@ fn bench_convert_base(c: &mut Criterion) {
                 black_box(&input),
                 black_box(src_table),
                 black_box(dst_table),
-            )
+            ).unwrap();
             black_box(out);
         })
     });
@@ -24,7 +24,7 @@ fn bench_convert_base(c: &mut Criterion) {
     c.bench_function("object", |b| {
         b.iter(|| {
             let out = Converter::new(src_table, dst_table).unwrap()
-                .convert(black_box(&input))
+                .convert(black_box(&input)).unwrap();
             black_box(out);
         })
     });

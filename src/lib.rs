@@ -15,14 +15,14 @@ its custom BigInt implementation that avoids overflow issues.
 ## Examples
 
 ```rust
-use anybase::{convert_base, Converter};
+use anybase::Converter;
 
 // Functional
-let result = convert_base("ff", "0123456789abcdef", "01234567").unwrap();
+let result = Converter::convert_base("ff", "0123456789abcdef", "01234567").unwrap();
 assert_eq!(result, "377");
 
 // Object-oriented
-let converter = Converter::new("01", "0123456789");
+let converter = Converter::new("01", "0123456789").unwrap();
 let result = converter.convert("1010").unwrap();
 assert_eq!(result, "10");
 ```
@@ -52,9 +52,9 @@ pub mod base {
     # Example
 
     ```
-    use anybase::{convert_base, base};
+    use anybase::{Converter, base};
 
-    let result = convert_base("1010", base::BIN, base::DEC).unwrap();
+    let result = Converter::convert_base("1010", base::BIN, base::DEC).unwrap();
     assert_eq!(result, "10");
     ```
     */

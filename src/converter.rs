@@ -12,7 +12,7 @@ use std::collections::HashMap;
 /// ```
 /// use anybase::Converter;
 /// 
-/// let converter = Converter::new("01", "0123456789");
+/// let converter = Converter::new("01", "0123456789").unwrap();
 /// let result = converter.convert("1010").unwrap();
 /// assert_eq!(result, "10");
 /// ```
@@ -86,7 +86,7 @@ impl<'a> Converter<'a> {
     /// 
     /// ```
     /// use anybase::Converter;
-    /// let converter = Converter::new("01", "0123456789");
+    /// let converter = Converter::new("01", "0123456789").unwrap();
     /// let inverse_converter = converter.inverse();
     /// assert_eq!(converter.src_table(), inverse_converter.dst_table());
     /// assert_eq!(converter.dst_table(), inverse_converter.src_table());
@@ -110,7 +110,7 @@ impl<'a> Converter<'a> {
     /// 
     /// ```
     /// use anybase::Converter;
-    /// let converter = Converter::new("01", "0123456789");
+    /// let converter = Converter::new("01", "0123456789").unwrap();
     /// let result = converter.convert("1010").unwrap();
     /// assert_eq!(result, "10");
     /// ```
@@ -137,15 +137,15 @@ impl<'a> Converter<'a> {
     /// # Examples
     ///
     /// ```rust
-    /// use anybase::convert_base;
+    /// use anybase::Converter;
     ///
     /// // Convert hexadecimal to binary
-    /// let result = convert_base("ff", "0123456789abcdef", "01");
-    /// assert_eq!(result.unwrap(), "11111111");
+    /// let result = Converter::convert_base("ff", "0123456789abcdef", "01").unwrap();
+    /// assert_eq!(result, "11111111");
     ///
     /// // Convert decimal to base-36
-    /// let result = convert_base("12345", "0123456789", "0123456789abcdefghijklmnopqrstuvwxyz");
-    /// assert_eq!(result.unwrap(), "9ix");
+    /// let result = Converter::convert_base("12345", "0123456789", "0123456789abcdefghijklmnopqrstuvwxyz").unwrap();
+    /// assert_eq!(result, "9ix");
     /// ```
     ///
     /// # Errors
