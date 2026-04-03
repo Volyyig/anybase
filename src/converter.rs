@@ -34,7 +34,7 @@ impl <'a>Converter<'a> {
     /// 
     /// # returns Err() 
     /// 
-    /// When either table is empty or contains duplicate characters.
+    /// When either table is too samll or contains duplicate characters or src and dst are equal
     /// 
     /// # Examples
     /// 
@@ -43,13 +43,15 @@ impl <'a>Converter<'a> {
     /// let converter = Converter::new("01", "0123456789");
     /// ```                 
     pub fn new(src_table: &'a str, dst_table: &'a str) -> Result<Self, &'static str> {
-        
+        if src_table == dst_table {
+            return Err("src_table and dst_table are equal");
+        }
         Ok(Converter {
             src_table,
             dst_table,
             src_map: {
-                if src_table.is_empty() {
-                    return Err("src_table is empty");
+                if src_table.len() < 2 {
+                    return Err("src_table is not large enough to be a number system");
                 }
                 let mut map = HashMap::new();
                 for (i, ch) in src_table.chars().enumerate() {
@@ -60,8 +62,8 @@ impl <'a>Converter<'a> {
                 map
             },
             dst_chars: {
-                if dst_table.is_empty() {
-                    return Err("dst_table is empty");
+                if dst_table.len() < 2 {
+                    return Err("dst_table is not large enough to be a number system");
                 }
                 let chars: Vec<char> = dst_table.chars().collect();
                 let unique_count = chars

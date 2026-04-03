@@ -60,8 +60,7 @@ pub use converter::*;
 /// 
 /// # Returns Err()
 ///
-///  When the Converter struct can't be created,
-///  or When the conversion can't be run
+///  A String containing the error code
 ///
 /// # Examples
 ///
@@ -143,6 +142,20 @@ mod tests {
     }
 
     #[test]
+    fn test_converter_creation_faliures() {
+        macro_rules! assert_err {
+            ($expr:expr, $msg:expr) => {
+                assert_eq!($expr.err().unwrap(), $msg);
+            };
+        }
+        assert_err!( Converter::new("01", "01"), "src_table and dst_table are equal");
+        assert_err!( Converter::new("", "01"), "src_table is not large enough to be a number system");
+        assert_err!( Converter::new("111111", "01"), "src_table contains duplicate characters");
+        assert_err!( Converter::new("01", ""), "dst_table is not large enough to be a number system");
+        assert_err!( Converter::new("01", "11111"), "dst_table contains duplicate characters");
+    }
+
+    #[test]
     fn test_converter() {
         let converter = Converter::new("0123456789", "01").unwrap();
         let result = converter.convert("10").unwrap();
@@ -161,13 +174,6 @@ mod tests {
     #[should_panic(expected = "dst_table contains duplicate characters")]
     fn test_duplicate_chars_in_table() {
         convert_base("123", "0123456789", "011").unwrap();
-    }
-
-    #[test]
-    fn test_same_table() {
-        let converter = Converter::new("0123456789", "0123456789").unwrap();
-        let result = converter.convert("12345").unwrap();
-        assert_eq!(result, "12345");
     }
 
     #[test]

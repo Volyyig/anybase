@@ -3,35 +3,27 @@ use anybase::*;
 #[test]
 fn test_zero_conversions() {
     assert_eq!(
-        convert_base("0", "0123456789", "0123456789").unwrap(),
+        convert_base("0", "0123456789", "01").unwrap(),
         "0"
-    );
-}
-
-#[test]
-fn test_single_char_tables() {
-    assert_eq!(
-        convert_base("1111", "01", "01").unwrap(),
-        "1111"
     );
 }
 
 #[test]
 fn test_same_source_destination() {
     assert_eq!(
-        convert_base("abc", "abc", "abc").unwrap(),
-        "bc"
+        convert_base("abc", "abc", "abc").err().unwrap(),
+        "src_table and dst_table are equal"
     );
 }
 
 #[test]
-#[should_panic(expected = "src_table is empty")]
+#[should_panic(expected = "src_table is not large enough to be a number system")]
 fn test_empty_src_table() {
     convert_base("123", "", "0123456789").unwrap();
 }
 
 #[test]
-#[should_panic(expected = "dst_table is empty")]
+#[should_panic(expected = "dst_table is not large enough to be a number system")]
 fn test_empty_dst_table() {
     convert_base("123", "0123456789", "").unwrap();
 }
