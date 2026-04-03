@@ -24,7 +24,7 @@ pub struct Converter<'a> {
     dst_chars: Vec<char>,
 }
 
-impl<'a> Converter<'a> {
+impl <'a>Converter<'a> {
     /// Creates a new `Converter` with specified source and destination character tables.
     /// 
     /// # Arguments
@@ -32,9 +32,9 @@ impl<'a> Converter<'a> {
     /// * `src_table` - A string slice representing the source base character table
     /// * `dst_table` - A string slice representing the destination base character table
     /// 
-    /// # Panics
+    /// # returns Err() 
     /// 
-    /// Panics if either table is empty or contains duplicate characters.
+    /// When either table is empty or contains duplicate characters.
     /// 
     /// # Examples
     /// 
@@ -117,46 +117,6 @@ impl<'a> Converter<'a> {
     pub fn convert(&self, input: &str) -> Result<String, String> {
         let b = self.parse_to_bigint(input)?;
         self.bigint_to_dst_table(b)
-    }
-
-    /// Concise functional interface for base conversion
-    ///
-    /// Converts a number represented as a string in one base to its equivalent
-    /// in another base, using custom character tables for both bases.
-    ///
-    /// # Arguments
-    ///
-    /// * `input` - The input number as a string
-    /// * `src_table` - Character table for the source base
-    /// * `dst_table` - Character table for the destination base
-    ///
-    /// # Returns
-    ///
-    /// Result containing the converted string or an error message
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use anybase::Converter;
-    ///
-    /// // Convert hexadecimal to binary
-    /// let result = Converter::convert_base("ff", "0123456789abcdef", "01").unwrap();
-    /// assert_eq!(result, "11111111");
-    ///
-    /// // Convert decimal to base-36
-    /// let result = Converter::convert_base("12345", "0123456789", "0123456789abcdefghijklmnopqrstuvwxyz").unwrap();
-    /// assert_eq!(result, "9ix");
-    /// ```
-    ///
-    /// # Errors
-    ///
-    /// Returns an error if:
-    /// - src_table or dst_table is empty
-    /// - src_table contains duplicate characters
-    /// - input contains characters not in src_table
-    pub fn convert_base(input: &str, src_table: &str, dst_table: &str) -> Result<String, String> {
-        let converter = Converter::new(src_table, dst_table)?;
-        converter.convert(input)
     }
 
     /// Returns the source character table.

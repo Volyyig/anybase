@@ -24,13 +24,13 @@ fn test_bidirectional_conversion() {
 
     for (input, src_table, dst_table) in test_cases {
         // 正向转换: src_base -> dst_base
-        let forward_result = Converter::convert_base(input, src_table, dst_table).expect(&format!(
+        let forward_result = convert_base(input, src_table, dst_table).expect(&format!(
             "Failed to convert {} from {} to {}",
             input, src_table, dst_table
         ));
 
         // 反向转换: dst_base -> src_base
-        let backward_result = Converter::convert_base(&forward_result, dst_table, src_table).expect(&format!(
+        let backward_result = convert_base(&forward_result, dst_table, src_table).expect(&format!(
             "Failed to convert back {} from {} to {}",
             forward_result, dst_table, src_table
         ));
@@ -60,11 +60,11 @@ fn test_bidirectional_conversion() {
     ];
 
     for (input, src_table, dst_table) in all_zero_cases {
-        let forward_result = Converter::convert_base(input, src_table, dst_table).expect(&format!(
+        let forward_result = convert_base(input, src_table, dst_table).expect(&format!(
             "Failed to convert {} from {} to {}",
             input, src_table, dst_table
         ));
-        let backward_result = Converter::convert_base(&forward_result, dst_table, src_table).expect(&format!(
+        let backward_result = convert_base(&forward_result, dst_table, src_table).expect(&format!(
             "Failed to convert back {} from {} to {}",
             forward_result, dst_table, src_table
         ));

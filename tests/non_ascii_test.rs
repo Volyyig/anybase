@@ -35,7 +35,7 @@ fn test_non_ascii_detailed() {
     }
     
     // Perform base conversion and display result
-    let result = Converter::convert_base(input, src, dst).unwrap();
+    let result = convert_base(input, src, dst).unwrap();
     println!("Conversion result: {}", result);
     
     // Output result properties

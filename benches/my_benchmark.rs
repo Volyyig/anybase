@@ -1,5 +1,6 @@
 use criterion::{Criterion, criterion_group, criterion_main};
 use std::hint::black_box;
+use anybase::convert_base;
 
 use anybase::Converter;
 fn bench_convert_base(c: &mut Criterion) {
@@ -11,7 +12,7 @@ fn bench_convert_base(c: &mut Criterion) {
 
     c.bench_function("default", |b| {
         b.iter(|| {
-            let out = Converter::convert_base(
+            let out = convert_base(
                 black_box(&input),
                 black_box(src_table),
                 black_box(dst_table),
